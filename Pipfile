@@ -10,6 +10,7 @@ flask = "*"
 flask-restplus = "*"
 psycopg2-binary = "*"
 psycopg2 = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3.7"
