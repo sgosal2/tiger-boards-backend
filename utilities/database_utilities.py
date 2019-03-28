@@ -7,7 +7,14 @@ def execute_query(query):
     conn = psycopg2.connect(config.DATABASE["url"], sslmode='require')
     cur = conn.cursor()
     cur.execute(query)
-    data = cur.fetchall()
-    cur.close()
-    conn.close()
-    return data
+    try:
+        data = cur.fetchall()
+    # If there is no data being fetched, data variable is set to null
+    except psycopg2.ProgrammingError:
+        data = None
+    finally:
+        conn.commit()
+        cur.close()
+        conn.close()
+        if data:
+            return data

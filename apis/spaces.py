@@ -7,4 +7,4 @@ api = Namespace("spaces", description="Information relating to spaces")
 @api.route('/')
 class Spaces(Resource):
     def get(self):
-        return database_utilities.execute_query("SELECT * FROM spaces;")
+        return database_utilities.execute_query("select * from spaces")
