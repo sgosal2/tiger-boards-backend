@@ -14,7 +14,21 @@ def execute_query(query):
         data = None
     finally:
         conn.commit()
+
+        # Format data to include column names
+        if data:
+            results = []
+            for row in data:
+                row_to_append = {}
+                col_index = 0
+                for col in cur.description:
+                    row_to_append[col[0]] = row[col_index]
+                    col_index += 1
+                results.append(row_to_append)
+
+            cur.close()
+            conn.close()
+            return results
+
         cur.close()
         conn.close()
-        if data:
-            return data
