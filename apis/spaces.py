@@ -30,7 +30,7 @@ class Space(Resource):
     def delete(self, space_id):
         """ Deletes space with the corresponding space_id """
         return database_utilities.execute_query(
-            f"""delete from spaces where space_id = `{space_id}`""")
+            f"""delete from spaces where space_id = %s""", (space_id, ))
 
     def patch(self, space_id):
         """ Replaces information of corresponding space_id with request body """
