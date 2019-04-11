@@ -16,7 +16,7 @@ class Favorites(Resource):
         parameters = (request.form['user_email'], request.form['user_email'])
         database_utilities.execute_query(query, parameters)
 
-@api.route('/<string:favorites>')
+@api.route('/<string:user_email>')
 class Favorite(Resource):
     def get(self, user_email):
         """ Fetch data for favorite with the corresponding user_email """
