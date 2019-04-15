@@ -13,7 +13,7 @@ class Favorites(Resource):
     def post(self):
         """ Insert data for new favorites """
         query = f"""insert into favorites values (%s, %s);"""
-        parameters = (request.form['user_email'], request.form['user_email'])
+        parameters = (request.form['user_email'], request.form['favorite_spaces'])
         database_utilities.execute_query(query, parameters)
 
 @api.route('/<string:user_email>')
@@ -30,7 +30,7 @@ class Favorite(Resource):
 
     def patch(self, user_email):
         """ Replaces information of corresponding user_email with request body """
-        query = f"""update favorites set user_email = %s, space_id = %s """
+        query = f"""update favorites set user_email = %s, favorite_spaces = %s """
         query += f"""where user_email = '{user_email}'"""
-        parameters = (request.form['user_email'], request.form['space_id'])
+        parameters = (request.form['user_email'], request.form['favorite_spaces'])
         database_utilities.execute_query(query, parameters)
