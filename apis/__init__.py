@@ -1,6 +1,8 @@
 from flask_restplus import Api
-from .spaces import api as spaces_api
+from .admins import api as admins_api
 from .favorites import api as favorites_api
+from .spaces import api as spaces_api
+
 
 api = Api(
     title="Tiger Boards API",
@@ -10,3 +12,4 @@ api = Api(
 
 api.add_namespace(spaces_api)
 api.add_namespace(favorites_api)
+api.add_namespace(admins_api)
