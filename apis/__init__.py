@@ -2,6 +2,7 @@ from flask_restplus import Api
 from .admins import api as admins_api
 from .favorites import api as favorites_api
 from .spaces import api as spaces_api
+from .user_settings import api as user_settings_api
 
 
 api = Api(
@@ -13,3 +14,4 @@ api = Api(
 api.add_namespace(spaces_api)
 api.add_namespace(favorites_api)
 api.add_namespace(admins_api)
+api.add_namespace(user_settings_api)
