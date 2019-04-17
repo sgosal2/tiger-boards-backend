@@ -25,3 +25,10 @@ class User(Resource):
     def delete(self, user_id):
         """ Deletes user with the corresponding user_id """
         return database_utilities.execute_query(f"""delete from users where user_id = '{user_id}'""")
+
+    def patch(self, user_id):
+        """ Replaces information of corresponding user_id with request body """
+        query = f"""update users set user_id = %s """
+        query += f"""where user_id = '{user_id}'"""
+        parameters = (request.form['user_id'], )
+        database_utilities.execute_query(query, parameters)
