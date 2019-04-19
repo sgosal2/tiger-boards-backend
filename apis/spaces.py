@@ -14,9 +14,10 @@ class Spaces(Resource):
     def post(self):
         """ Insert data for new space """
         query = f"""insert into spaces values (%s, %s, %s, %s, %s);"""
-        parameters = (request.form['space_id'], request.form['building_id'],
-                      request.form['name'], request.form['capacity'],
-                      request.form['features'])
+        json_data = request.get_json()
+        parameters = (json_data['space_id'], json_data['building_id'],
+                      json_data['name'], json_data['capacity'],
+                      json_data['features'])
         database_utilities.execute_query(query, parameters)
 
 
@@ -37,7 +38,8 @@ class Space(Resource):
         query = f"""update spaces set space_id = %s, building_id = %s, """
         query += f"""name = %s, capacity = %s, features = %s """
         query += f"""where space_id = '{space_id}'"""
-        parameters = (request.form['space_id'], request.form['building_id'],
-                      request.form['name'], request.form['capacity'],
-                      request.form['features'])
+        json_data = request.get_json()
+        parameters = (json_data['space_id'], json_data['building_id'],
+                      json_data['name'], json_data['capacity'],
+                      json_data['features'])
         database_utilities.execute_query(query, parameters)
