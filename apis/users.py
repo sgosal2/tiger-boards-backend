@@ -4,6 +4,7 @@ from utilities import database_utilities
 
 api = Namespace("users", description="Information relating to users")
 
+
 @api.route('/')
 class Users(Resource):
     def get(self):
@@ -13,8 +14,10 @@ class Users(Resource):
     def post(self):
         """ Insert data for new users """
         query = f"""insert into users values (%s);"""
-        parameters = (request.form['user_id'], )
+        json_data = request.get_json()
+        parameters = (json_data['user_id'], )
         database_utilities.execute_query(query, parameters)
+
 
 @api.route('/<string:user_id>')
 class User(Resource):
@@ -30,5 +33,6 @@ class User(Resource):
         """ Replaces information of corresponding user_id with request body """
         query = f"""update users set user_id = %s """
         query += f"""where user_id = '{user_id}'"""
-        parameters = (request.form['user_id'], )
+        json_data = request.get_json()
+        parameters = (json_data['user_id'], )
         database_utilities.execute_query(query, parameters)
