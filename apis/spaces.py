@@ -1,5 +1,5 @@
 from flask import request
-from flask_restplus import Namespace, Resource, fields
+from flask_restplus import Namespace, Resource, fields, reqparse
 from utilities import database_utilities
 
 api = Namespace("spaces", description="Information relating to spaces")
@@ -9,7 +9,18 @@ api = Namespace("spaces", description="Information relating to spaces")
 class Spaces(Resource):
     def get(self):
         """ Fetch data for all spaces """
-        return database_utilities.execute_query("select * from spaces")
+
+        # Parse request for parameters
+        parser = reqparse.RequestParser()
+        parser.add_argument('building_id')
+        args = parser.parse_args()
+
+        # Build query strings
+        where_query = "WHERE building_id = %s" if args['building_id'] else ''
+        query = f"SELECT * FROM spaces {where_query}"
+        parameters = (args['building_id'],)
+
+        return database_utilities.execute_query(query, parameters)
 
     def post(self):
         """ Insert data for new space """
