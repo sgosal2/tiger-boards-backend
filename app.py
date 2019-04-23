@@ -8,6 +8,10 @@ import psycopg2
 app = Flask(__name__)
 api.init_app(app)
 
+@app.after_request
+def add_cors_headers(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)

@@ -4,6 +4,7 @@ from utilities import database_utilities
 
 api = Namespace("admins", description="Information relating to system admins")
 
+
 @api.route('/')
 class Admins(Resource):
     def get(self):
@@ -13,8 +14,10 @@ class Admins(Resource):
     def post(self):
         """ Insert data for a new admin """
         query = f"""insert into admins values (%s);"""
-        parameters = (request.form['email'], )
+        json_data = request.get_json()
+        parameters = (json_data['email'], )
         database_utilities.execute_query(query, parameters)
+
 
 @api.route('/<string:email>')
 class Admin(Resource):
