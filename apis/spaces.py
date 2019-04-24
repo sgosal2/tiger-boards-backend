@@ -1,6 +1,9 @@
-from flask import request
+from flask import request, jsonify
 from flask_restplus import Namespace, Resource, fields, reqparse
-from utilities import database_utilities
+
+from datetime import datetime, time
+
+from utilities import database_utilities, convert_datetimes_in_query_results
 
 api = Namespace("spaces", description="Information relating to spaces")
 
@@ -13,6 +16,7 @@ class Spaces(Resource):
         # Parse request for parameters
         parser = reqparse.RequestParser()
         parser.add_argument('building_id')
+        parser.add_argument('datetime')
         args = parser.parse_args()
 
         # Build query strings
@@ -20,7 +24,25 @@ class Spaces(Resource):
         query = f"SELECT * FROM spaces {where_query}"
         parameters = (args['building_id'],)
 
-        return database_utilities.execute_query(query, parameters)
+        spaces_query_results = database_utilities.execute_query(
+            query, parameters)
+
+        # TODO: Refactor
+        # If provided a datetime, get availability data
+        if args['datetime'] and args['building_id']:
+            # Get events of queried spaces
+            space_ids = [row["space_id"] for row in spaces_query_results]
+            events_query_results = database_utilities.execute_query(
+                "SELECT * FROM class WHERE space_id IN %s", (tuple(space_ids),))
+
+            convert_datetimes_in_query_results(events_query_results)
+
+            for space in spaces_query_results:
+                space["is_available"] = True
+
+            return spaces_query_results
+        else:
+            return spaces_query_results
 
     def post(self):
         """ Insert data for new space """
