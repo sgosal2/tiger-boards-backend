@@ -4,6 +4,7 @@ from utilities import database_utilities
 
 api = Namespace("favorites", description="Information relating to favorites")
 
+
 @api.route('/')
 class Favorites(Resource):
     def get(self):
@@ -13,8 +14,10 @@ class Favorites(Resource):
     def post(self):
         """ Insert data for new favorites """
         query = f"""insert into favorites values (%s, %s);"""
-        parameters = (request.form['user_id'], request.form['favorite_spaces'])
+        json_data = request.get_json()
+        parameters = (json_data['user_id'], json_data['favorite_spaces'])
         database_utilities.execute_query(query, parameters)
+
 
 @api.route('/<string:user_id>')
 class Favorite(Resource):
@@ -32,5 +35,6 @@ class Favorite(Resource):
         """ Replaces information of corresponding user_id with request body """
         query = f"""update favorites set user_id = %s, favorite_spaces = %s """
         query += f"""where user_id = '{user_id}'"""
-        parameters = (request.form['user_id'], request.form['favorite_spaces'])
+        json_data = request.get_json()
+        parameters = (json_data['user_id'], json_data['favorite_spaces'])
         database_utilities.execute_query(query, parameters)
