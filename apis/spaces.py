@@ -2,8 +2,15 @@ from flask import request, jsonify
 from flask_restplus import Namespace, Resource, fields, reqparse
 
 from datetime import datetime, time
+from time import mktime
 
-from utilities import database_utilities, convert_datetimes_in_query_results
+from utilities import (
+    convert_datetimes_in_query_results,
+    get_day_of_the_week_from_datetime,
+    get_semester_from_datetime,
+    parse_datetime
+)
+from utilities.database_utilities import execute_query
 
 api = Namespace("spaces", description="Information relating to spaces")
 
@@ -24,25 +31,38 @@ class Spaces(Resource):
         query = f"SELECT * FROM spaces {where_query}"
         parameters = (args['building_id'],)
 
-        spaces_query_results = database_utilities.execute_query(
-            query, parameters)
+        spaces_query_results = execute_query(query, parameters)
 
-        # TODO: Refactor
         # If provided a datetime, get availability data
         if args['datetime'] and args['building_id']:
             # Get events of queried spaces
             space_ids = [row["space_id"] for row in spaces_query_results]
-            events_query_results = database_utilities.execute_query(
+            events_query_results = execute_query(
                 "SELECT * FROM class WHERE space_id IN %s", (tuple(space_ids),))
 
-            convert_datetimes_in_query_results(events_query_results)
+            datetime_obj = parse_datetime(args["datetime"])
+            day_of_the_week = get_day_of_the_week_from_datetime(datetime_obj)
+            time_obj = datetime_obj.time()
+            current_semester = get_semester_from_datetime(datetime_obj)
 
             for space in spaces_query_results:
-                space["is_available"] = True
+                space["is_available"] = "Available"
+                for event in events_query_results:
+                    # Check matching space_id and semester_id
+                    if (space["space_id"] == event["space_id"]
+                            and event["semester_id"] == current_semester):
+                        # Check day
+                        day_check = day_of_the_week in list(event["days"])
 
-            return spaces_query_results
-        else:
-            return spaces_query_results
+                        # Check time
+                        time_check = (event["start_time"] < time_obj
+                                      and time_obj < event["end_time"])
+
+                        if day_check and time_check:
+                            space["is_available"] = event["class_title"]
+                            break
+
+        return spaces_query_results
 
     def post(self):
         """ Insert data for new space """
@@ -51,19 +71,19 @@ class Spaces(Resource):
         parameters = (json_data['space_id'], json_data['building_id'],
                       json_data['name'], json_data['capacity'],
                       json_data['features'])
-        database_utilities.execute_query(query, parameters)
+        execute_query(query, parameters)
 
 
 @api.route('/<string:space_id>')
 class Space(Resource):
     def get(self, space_id):
         """ Fetch data for space with the corresponding space_id """
-        return database_utilities.execute_query(
+        return execute_query(
             f"""select * from spaces where space_id = '{space_id}'""")
 
     def delete(self, space_id):
         """ Deletes space with the corresponding space_id """
-        return database_utilities.execute_query(
+        return execute_query(
             f"""delete from spaces where space_id = %s""", (space_id, ))
 
     def patch(self, space_id):
@@ -75,4 +95,4 @@ class Space(Resource):
         parameters = (json_data['space_id'], json_data['building_id'],
                       json_data['name'], json_data['capacity'],
                       json_data['features'])
-        database_utilities.execute_query(query, parameters)
+        execute_query(query, parameters)
