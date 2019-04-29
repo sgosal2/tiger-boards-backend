@@ -1,4 +1,5 @@
 from flask import request
+from flask_jwt_extended import jwt_required
 from flask_restplus import Namespace, Resource, fields, reqparse
 from utilities import database_utilities
 
@@ -22,6 +23,7 @@ class Spaces(Resource):
 
         return database_utilities.execute_query(query, parameters)
 
+    @jwt_required
     def post(self):
         """ Insert data for new space """
         query = f"""insert into spaces values (%s, %s, %s, %s, %s);"""
@@ -39,11 +41,13 @@ class Space(Resource):
         return database_utilities.execute_query(
             f"""select * from spaces where space_id = '{space_id}'""")
 
+    @jwt_required
     def delete(self, space_id):
         """ Deletes space with the corresponding space_id """
         return database_utilities.execute_query(
             f"""delete from spaces where space_id = %s""", (space_id, ))
 
+    @jwt_required
     def patch(self, space_id):
         """ Replaces information of corresponding space_id with request body """
         query = f"""update spaces set space_id = %s, building_id = %s, """

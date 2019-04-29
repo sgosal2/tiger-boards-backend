@@ -1,4 +1,5 @@
 from flask import request
+from flask_jwt_extended import jwt_required
 from flask_restplus import Namespace, Resource, fields
 from utilities import database_utilities
 
