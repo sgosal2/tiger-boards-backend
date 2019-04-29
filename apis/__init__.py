@@ -4,7 +4,6 @@ from .buildings import api as buildings_api
 from .favorites import api as favorites_api
 from .login import api as login_api
 from .spaces import api as spaces_api
-from .user_settings import api as user_settings_api
 from .users import api as users_api
 
 
@@ -19,5 +18,4 @@ api.add_namespace(buildings_api)
 api.add_namespace(favorites_api)
 api.add_namespace(login_api)
 api.add_namespace(spaces_api)
-api.add_namespace(user_settings_api)
 api.add_namespace(users_api)
