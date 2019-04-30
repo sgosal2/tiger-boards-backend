@@ -7,6 +7,11 @@ import psycopg2
 
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = 'v-secret'
+app.config['JWT_TOKEN_LOCATION'] = ['cookies']
+app.config['JWT_COOKIE_SECURE'] = False
+app.config['JWT_ACCESS_COOKIE_PATH'] = '/'
+app.config['JWT_REFRESH_COOKIE_PATH'] = '/login'
+app.config['JWT_COOKIE_CSRF_PROTECT'] = True
 jwt = JWTManager(app)
 api.init_app(app)
 
