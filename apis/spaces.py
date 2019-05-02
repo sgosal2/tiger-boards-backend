@@ -84,15 +84,26 @@ class Space(Resource):
     def delete(self, space_id):
         """ Deletes space with the corresponding space_id """
         return execute_query(
-            f"""delete from spaces where space_id = %s""", (space_id, ))
+            "DELETE FROM spaces WHERE space_id = %s", (space_id, ))
 
     def patch(self, space_id):
-        """ Replaces information of corresponding space_id with request body """
-        query = f"""update spaces set space_id = %s, building_id = %s, """
-        query += f"""name = %s, capacity = %s, features = %s """
-        query += f"""where space_id = '{space_id}'"""
+        """Updates a space record."""
+
         json_data = request.get_json()
-        parameters = (json_data['space_id'], json_data['building_id'],
-                      json_data['name'], json_data['capacity'],
-                      json_data['features'])
+        parameters = []
+        set_query = []
+        space_attributes = ["space_id", "building_id",
+                            "name", "capacity", "features"]
+
+        for attr in space_attributes:
+            if attr in json_data:
+                set_query.append(f"{attr} = %s")
+                parameters.append(json_data[attr])
+
+        set_query = ", ".join(set_query)
+        parameters.append(space_id)
+        parameters = tuple(parameters)
+        query = f"UPDATE spaces SET {set_query} WHERE space_id = %s"
+        print(query)
+        print(parameters)
         execute_query(query, parameters)
