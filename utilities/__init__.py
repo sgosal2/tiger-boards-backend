@@ -8,6 +8,9 @@ from .time import (
 
 
 def convert_datetimes_in_query_results(query_results):
+    if not query_results:
+        return
+
     for row in query_results:
         for col in row:
             if type(row[col]) == datetime.time:

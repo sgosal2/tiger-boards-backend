@@ -57,13 +57,24 @@ class Events(Resource):
 class Event(Resource):
     def patch(self, event_id):
         """Edit an event info."""
-        query = """
-            UPDATE building
-            SET building_name = %s, building_id = %s 
-            WHERE building_id = %s
-            """
+
         json_data = request.get_json()
-        parameters = (json_data['new_name'], json_data['new_id'], event_id)
+        parameters = []
+        set_query = []
+        event_attributes = ["class_title", "subject",
+                            "course_num", "start_time", "end_time", "days", "space_id", "instructor_first", "instructor_last", "semester_id", "crn"]
+
+        for attr in event_attributes:
+            if attr in json_data:
+                set_query.append(f"{attr} = %s")
+                parameters.append(json_data[attr])
+
+        set_query = ", ".join(set_query)
+        parameters.append(f"{json_data['crn']}{json_data['semester_id']}")
+        parameters = tuple(parameters)
+        query = f"UPDATE class SET {set_query} WHERE CONCAT(crn, semester_id) = %s"
+        print(query)
+        print(parameters)
         execute_query(query, parameters)
         return jsonify(msg="Edit successful.")
 
