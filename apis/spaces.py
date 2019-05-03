@@ -72,6 +72,7 @@ class Spaces(Resource):
                       json_data['name'], json_data['capacity'],
                       json_data['features'])
         execute_query(query, parameters)
+        return jsonify(msg="Insert successful.")
 
 
 @api.route('/<string:space_id>')
@@ -83,8 +84,9 @@ class Space(Resource):
 
     def delete(self, space_id):
         """ Deletes space with the corresponding space_id """
-        return execute_query(
+        execute_query(
             "DELETE FROM spaces WHERE space_id = %s", (space_id, ))
+        return jsonify(msg="Delete successful.")
 
     def patch(self, space_id):
         """Updates a space record."""
@@ -107,3 +109,4 @@ class Space(Resource):
         print(query)
         print(parameters)
         execute_query(query, parameters)
+        return jsonify(msg="Edit successful.")
