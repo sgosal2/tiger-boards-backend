@@ -1,4 +1,4 @@
-from datetime import time
+import datetime
 
 from .time import (
     get_day_of_the_week_from_datetime,
@@ -10,5 +10,5 @@ from .time import (
 def convert_datetimes_in_query_results(query_results):
     for row in query_results:
         for col in row:
-            if type(row[col]) == time:
+            if type(row[col]) == datetime.time:
                 row[col] = str(row[col])
