@@ -1,4 +1,5 @@
 from flask import request, jsonify
+from flask_jwt_extended import jwt_required
 from flask_restplus import Namespace, Resource, fields, reqparse
 
 from datetime import datetime, time
@@ -64,6 +65,7 @@ class Spaces(Resource):
 
         return spaces_query_results
 
+    @jwt_required
     def post(self):
         """ Insert data for new space """
         query = f"""insert into spaces values (%s, %s, %s, %s, %s);"""
@@ -79,15 +81,17 @@ class Spaces(Resource):
 class Space(Resource):
     def get(self, space_id):
         """ Fetch data for space with the corresponding space_id """
-        return execute_query(
-            f"""select * from spaces where space_id = '{space_id}'""")
+        return database_utilities.execute_query(
+            f"""select * from spaces where space_id = %s""", (space_id, ))
 
+    @jwt_required
     def delete(self, space_id):
         """ Deletes space with the corresponding space_id """
         execute_query(
             "DELETE FROM spaces WHERE space_id = %s", (space_id, ))
         return jsonify(msg="Delete successful.")
 
+    @jwt_required
     def patch(self, space_id):
         """Updates a space record."""
 
