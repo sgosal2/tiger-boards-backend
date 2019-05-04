@@ -65,7 +65,6 @@ class Spaces(Resource):
 
         return spaces_query_results
 
-    @jwt_required
     def post(self):
         """ Insert data for new space """
         query = f"""insert into spaces values (%s, %s, %s, %s, %s);"""
@@ -84,14 +83,12 @@ class Space(Resource):
         return execute_query(
             f"""select * from spaces where space_id = %s""", (space_id, ))
 
-    @jwt_required
     def delete(self, space_id):
         """ Deletes space with the corresponding space_id """
         execute_query(
             "DELETE FROM spaces WHERE space_id = %s", (space_id, ))
         return jsonify(msg="Delete successful.")
 
-    @jwt_required
     def patch(self, space_id):
         """Updates a space record."""
 
