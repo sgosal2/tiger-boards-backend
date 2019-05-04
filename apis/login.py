@@ -20,26 +20,16 @@ class Login(Resource):
         data = database_utilities.execute_query(
             f"""select * from admins where email = %s""", (json_data['email'], ))
         if data:
-            email = data[0]['email']
-            access_token = create_access_token(identity=email)
-            refresh_token = create_refresh_token(identity=email)
-
-            resp = jsonify({
-                "access_token": access_token,
-                "refresh_token": refresh_token
-            })
-            return resp
+            return jsonify({"is_admin": True})
         else:
-            return jsonify({"msg": "User is not an admin"})
+            return jsonify({"is_admin": False})
 
 
 @api.route('/refresh')
 class Refresh(Resource):
-    @jwt_refresh_token_required
     def post(self):
         current_user = get_jwt_identity()
         access_token = create_access_token(identity=current_user)
 
-        resp = jsonify({"refresh": True})
-        set_access_cookies(resp, access_token)
+        resp = jsonify({"refresh_token": access_token})
         return resp
