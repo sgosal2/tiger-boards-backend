@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, jsonify
 from flask_jwt_extended import jwt_required
 from flask_restplus import Namespace, Resource, fields
 from utilities import database_utilities
@@ -18,6 +18,7 @@ class Admins(Resource):
         json_data = request.get_json()
         parameters = (json_data['email'], )
         database_utilities.execute_query(query, parameters)
+        return jsonify(msg="Insert successful.")
 
 
 @api.route('/<string:email>')
@@ -28,4 +29,6 @@ class Admin(Resource):
 
     def delete(self, email):
         """ Deletes admin with the corresponding email """
-        return database_utilities.execute_query(f"""delete from admins where email = %s""", (email, ))
+        database_utilities.execute_query(
+            f"""delete from admins where email = %s""", (email, ))
+        return jsonify(msg="Delete successful.")

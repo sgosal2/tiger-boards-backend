@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, make_response
 from flask_jwt_extended import (
     create_access_token, create_refresh_token, jwt_refresh_token_required,
     get_jwt_identity
@@ -14,15 +14,12 @@ class Login(Resource):
     def post(self):
         """ Returns JWT upon login verification """
         json_data = request.get_json()
-        if not json_data['email']:
-            return jsonify({"msg": "Missing email"}), 400
+        if 'email' not in json_data or not json_data['email']:
+            return make_response(jsonify(msg="Missing email"), 401)
 
         data = database_utilities.execute_query(
-            f"""select * from admins where email = %s""", (json_data['email'], ))
-        if data:
-            return jsonify({"is_admin": True})
-        else:
-            return jsonify({"is_admin": False})
+            "SELECT * FROM admins WHERE email = %s", (json_data['email'], ))
+        return jsonify({"is_admin": len(data) > 0})
 
 
 @api.route('/refresh')

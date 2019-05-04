@@ -81,7 +81,7 @@ class Space(Resource):
     def get(self, space_id):
         """ Fetch data for space with the corresponding space_id """
         return execute_query(
-            f"""select * from spaces where space_id = %s""", (space_id, ))
+            "SELECT * FROM spaces WHERE space_id = %s", (space_id, ))
 
     def delete(self, space_id):
         """ Deletes space with the corresponding space_id """

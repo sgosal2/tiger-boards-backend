@@ -1,5 +1,5 @@
 from apis import api
-from flask import Flask
+from flask import Flask, jsonify
 from flask_restplus import Resource, Api
 import os
 import psycopg2
