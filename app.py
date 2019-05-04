@@ -8,10 +8,9 @@ import psycopg2
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = 'v-secret'
 app.config['JWT_TOKEN_LOCATION'] = ['cookies']
-app.config['JWT_COOKIE_SECURE'] = False
 app.config['JWT_ACCESS_COOKIE_PATH'] = '/'
-app.config['JWT_REFRESH_COOKIE_PATH'] = '/login'
-app.config['JWT_COOKIE_CSRF_PROTECT'] = True
+app.config['JWT_REFRESH_COOKIE_PATH'] = '/'
+app.config['JWT_COOKIE_CSRF_PROTECT'] = False
 jwt = JWTManager(app)
 api.init_app(app)
 
@@ -19,6 +18,8 @@ api.init_app(app)
 @app.after_request
 def add_cors_headers(response):
     response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Headers'] = 'content-type'
+    response.headers['Access-Control-Allow-Credentials'] = True
     return response
 
 
