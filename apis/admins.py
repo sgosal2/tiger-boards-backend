@@ -12,7 +12,6 @@ class Admins(Resource):
         """ Fetch data for all admins """
         return database_utilities.execute_query("select * from admins")
 
-    @jwt_required
     def post(self):
         """ Insert data for a new admin """
         query = f"""insert into admins values (%s);"""
@@ -27,7 +26,6 @@ class Admin(Resource):
         """ Fetch data for admin with the corresponding email """
         return database_utilities.execute_query(f"""select * from admins where email = %s""", (email, ))
 
-    @jwt_required
     def delete(self, email):
         """ Deletes admin with the corresponding email """
         return database_utilities.execute_query(f"""delete from admins where email = %s""", (email, ))
