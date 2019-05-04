@@ -15,7 +15,6 @@ class Login(Resource):
         """ Returns JWT upon login verification """
         json_data = request.get_json()
         if 'email' not in json_data or not json_data['email']:
-            print("HERE")
             return make_response(jsonify(msg="Missing email"), 401)
 
         data = database_utilities.execute_query(
